@@ -1,0 +1,159 @@
+---
+title: "VS Code for R"
+author: "Leslie Emery"
+date: "`r format(Sys.time(), '%Y-%m-%d %I:%M %Z')`"
+format:
+  revealjs:
+    slide-number: true
+    code-fold: show
+    scrollable: true
+    highlight: pygment
+    toc: true
+    toc_depth: 2
+    theme: simple
+---
+
+```{r}
+#| label: setup
+#| include: false
+knitr::opts_chunk$set(echo = TRUE,
+                      results = "markup",
+                      message=FALSE,
+                      warning=FALSE,
+                      cache=FALSE)
+```
+
+
+```{r}
+#| label: libraries
+#| echo: false
+#| results: false
+library(bmspal)
+library(bmsdash)
+library(dplyr)
+library(DT)
+library(ggplot2)
+library(glue)
+library(haven)
+library(stringr)
+library(tidyr)
+```
+
+```{r}
+#| label: ggplot-settings
+#| echo: false
+#| results: false
+# Set default GGplot theme
+old_theme <- theme_set(theme_bms(axis_title_just="m", base_size=18, axis_title_size="20"))
+angled_xlabs <- theme(axis.text.x=element_text(angle=70, hjust=1))
+# Set variables for tracking table and figure numbers.
+tabN <- 0
+figN <- 0
+```
+
+
+## Why would you want to use VSCode instead of RStudio?
+- To use the same IDE across multiple languages
+- More power features
+- Multiple R terminals
+- Extensions
+- Copilot chat
+  - "Explain this"
+  - /fix, /tests, etc.
+
+## How does it work?
+- Outline view
+- Open terminal then send to terminal
+- Plot
+- `View()`
+- Datatable or other `http` viewer things
+- Git changes indicators
+
+## For different kinds of R projects
+- Quarto (these slides)
+- R script
+- Package (dpi)
+- RMarkdown (dpr-ptlamp with local option)
+- Shiny app (MRDHypercare)
+- Publishing to Connect
+  - Posit Publisher extension
+    - Does not use existing rsconnect dir for push-button deploy
+    - Still to be investigated
+
+## Improvements to make it as good as RStudio
+- Custom shortcuts
+  - Pipe
+  - Assignment operator
+  - R: Run Command in Terminal
+
+## Useful extensions for R/Posit
+- GitHub Copilot & GitHub Copilot Chat
+- R
+- RMarkdown
+- Shiny
+- Quarto
+- Bootstrap 5 & FontAwesome Snippets
+- HTML CSS Support
+- Rainbow CSV
+- Posit Publisher (I haven't tried it yet)
+
+## Installation
+- `httpgd` & `languageserver` & `rlang`
+- `radian`
+  - Doesn't seem to work with `renv` in any way I'm happy with
+  - If you install with Homebrew or MacPorts, you'll end up with a second R install to manage
+  - Homebrew and MacPorts R can only install R packages from source (no binaries)
+    - Homebrew can have binaries with some extra setup
+  - This would also mean reinstalling all packages, and every project `renv`
+- Command line
+  - On Mac, in command palette, do "Install 'code' command in PATH"
+
+## No "projects", just "workspaces"
+- User vs. Workspace settings
+- `.vscode` dir (only created if you set workspace settings)
+- Opening with `code dir_path` from terminal
+  - Keeps proxy settings (e.g. for installing packages, Copilot)
+  - Uses project renv
+
+## With `renv`
+- Negative: need to install VS Code helper packages in every project `renv`
+- Always check:
+  - You launch R from the project directory
+  - You see the `renv` startup message
+
+`Project '~/devel/vscode_for_r' loaded. [renv 1.0.5]`
+
+
+## [Settings](https://code.visualstudio.com/docs/getstarted/settings)
+- Settings files
+  - `settings.json`
+  - `keybindings.json`
+  - Locations
+    - Windows %APPDATA%\Code\User\settings.json
+    - macOS $HOME/Library/Application\ Support/Code/User/settings.json
+    - Linux $HOME/.config/Code/User/settings.json
+- Sync across devices with your GitHub account
+ 
+## Gotchas
+- Tab space length
+- No backticks when autocompleting var names in tidyverse commands
+- Very finicky Find/Replace in selection
+- Terminal: Run Selected Text in Active Terminal vs. R: Run Command in Terminal
+
+## Local vs. Workbench vs. Domino
+
+- Just some information to get started, since I haven't used these much yet
+- Workbench and Domino use [Coder.com's `code-server`](https://github.com/coder/code-server)
+  - Can't access official MS VS Code Marketplace [more info](https://coder.com/docs/code-server/FAQ#why-cant-code-server-use-microsofts-extension-marketplace)
+    - Uses [Open VSX Registry](https://open-vsx.org/) instead
+    - Some extensions are listed on both
+    - You can also [manually download and build an extension from the VS Code Marketplace](https://docs.dominodatalab.com/en/latest/user_guide/fbb1db/open-a-vs-code-workspace/#_use_vs_codes_extensions_manager)
+  - Settings are in a different place
+    - `~/.local/share/code-server/User` on Workbench
+    - `/mnt/.vscode/User` on Domino
+    - Backup & Sync for settings/extensions doesn't work
+  - "IDE in the browser"
+  - MS also has a (confusingly similarly named) VS Code Server product
+    - [Reddit discussion](https://www.reddit.com/r/homelab/comments/1ba5n2c/vs_code_servers_microsoft_or_coder/)
+    - [StackExchange answer](https://opensource.stackexchange.com/questions/14055/difference-between-licensing-terms-of-code-server-vs-vs-code-server)
+- VS Code Terminal is **very** slow on Domino
